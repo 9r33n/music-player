@@ -1,5 +1,5 @@
 :root {
-  --primary-color: #ec1f55;
+  --primary-color: #01a136;
   --text-color: #333;
 }
 
@@ -151,7 +151,7 @@ header h2 {
 
 /* PLAYLIST */
 .playlist {
-  margin-top: 408px;
+  margin-top: 430px;
   padding: 12px;
 }
 
