@@ -17,12 +17,17 @@ const nextBtn = $(".btn-next");
 const prevBtn = $(".btn-prev");
 const randomBtn = $(".btn-random");
 const repeatBtn = $(".btn-repeat");
+const volumeBtn = $(".btn-volume");
+const volumeProgress = $("#volume-progress");
+const volumeMax = $(".volume-max");
+const volumeMin = $(".volume-min");
 
 const app = {
   currentIndex: 0,
   isPlaying: false,
   isRandom: false,
   isRepeat: false,
+  isMuted: false,
   config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
 
   songs: [
@@ -230,6 +235,25 @@ const app = {
         }
       }
     };
+
+    // Xử lý khi click vào btn-volume
+    volumeBtn.onclick = function () {
+      _this.isMuted = !_this.isMuted;
+      audio.muted = _this.isMuted;
+      // (chưa biết cách lưu config)
+      volumeMax.classList.toggle("disable", _this.isMuted);
+      volumeMin.classList.toggle("disable", !_this.isMuted);
+    }
+
+
+    // Xử lý khi change volume (có lỗi chưa fix đc)
+      // volumeProgress.onchange = function (e) {
+      //   if (_this.isMuted) {
+      //     e.target.value  === audio.volume;
+      //   }
+      //   audio.volume = e.target.value / 100;
+      // }
+    
   },
 
   // Xử lý view khi next song

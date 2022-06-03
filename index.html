@@ -51,9 +51,13 @@
   
       <div class="video-control">
         <input id="progress" class="progress" type="range" value="0" step="1" min="0" max="100">
-        <button class="volume-btn">
-          <i class="fas fa-volume-up"></i>
-        </button>
+        <div class="volume">
+          <button class="btn-volume">
+            <i class="volume-max fas fa-volume-up"></i>
+            <i class="volume-min fas fa-volume-mute disable"></i>
+          </button>
+          <!-- <input id="volume-progress" class="progress" type="range" value="100" step="5" min="0" max="100"> -->
+        </div>
       </div>
   
       <audio id="audio" src=""></audio>

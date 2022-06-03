@@ -126,6 +126,7 @@ header h2 {
   opacity: 0.7;
   -webkit-transition: 0.2s;
   transition: opacity 0.2s;
+  margin-right: 5px;
 }
 
 .progress::-webkit-slider-thumb {
@@ -138,15 +139,59 @@ header h2 {
 }
 
 /* VOLUME */
-.volume-btn {
+/* .video-control div {
+  background-color: #ccc;
+
+} */
+.disable {
+  display: none;
+}
+
+.volume-min {
+  padding: 0 1px;
+}
+
+.btn-volume {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 0 18px 18px;
+  padding: 10px 10px 10px 10px;
   background-color: transparent;
   color: #666;
   font-size: 16px;
   border: none;
+  position: relative;
+}
+
+.btn-volume:hover ~ .volume #volume-progress {
+  cursor: pointer;
+  display: block;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.btn-volume:hover::after {
+  position: absolute;
+  top: -14%;
+  left: 40%;
+  width: 75%;
+  height: 15px;
+  /* background-color: red; */
+  content: "";
+
+}
+
+#volume-progress {
+  z-index: 1;
+  display: none;
+  position: absolute;
+  top: -100%;
+  left: 0%;
+  width: 150%;
+  height: 20%;
+  transform: rotate(-90deg);
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 /* PLAYLIST */
