@@ -51,13 +51,19 @@
   
       <div class="video-control">
         <input id="progress" class="progress" type="range" value="0" step="1" min="0" max="100">
-        <div class="volume">
-          <button class="btn-volume">
-            <i class="volume-max fas fa-volume-up"></i>
-            <i class="volume-min fas fa-volume-mute disable"></i>
-          </button>
-          <!-- <input id="volume-progress" class="progress" type="range" value="100" step="5" min="0" max="100"> -->
+        <div class="time">
+          <span class="current-time">00:00</span>
+          <span class="duration">00:00</span>
         </div>
+      </div>
+      <div class="volume">
+        <button class="volume-min">
+          <i class="fas fa-volume-mute"></i>
+        </button>
+        <input id="volume-progress" class="progress" type="range" value="100" min="0" max="100">
+        <button class="volume-max">
+          <i class="fas fa-volume-up"></i>
+        </button>
       </div>
   
       <audio id="audio" src=""></audio>

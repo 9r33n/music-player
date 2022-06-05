@@ -21,6 +21,8 @@ const volumeBtn = $(".btn-volume");
 const volumeProgress = $("#volume-progress");
 const volumeMax = $(".volume-max");
 const volumeMin = $(".volume-min");
+const durationTime = $(".duration");
+const currentTime = $(".current-time");
 
 const app = {
   currentIndex: 0,
@@ -35,22 +37,19 @@ const app = {
       name: "Ái Nộ",
       singer: "Masew x Khoi Vu",
       path: "./songs/aino.mp3",
-      image:
-        "./img/aino.jpg",
+      image: "./img/aino.jpg",
     },
     {
       name: "3 1 0 7",
       singer: "W/n / Duongg / Nâu",
       path: "./songs/3107.mp3",
-      image:
-        "./img/3107.jpg",
+      image: "./img/3107.jpg",
     },
     {
       name: "Thức Giấc",
       singer: "Da LAB",
       path: "./songs/thucgiac.mp3",
-      image:
-        "https://avatar-ex-swe.nixcdn.com/singer/avatar/2020/08/03/3/f/4/5/1596425146149_600.jpg",
+      image: "https://avatar-ex-swe.nixcdn.com/singer/avatar/2020/08/03/3/f/4/5/1596425146149_600.jpg",
     },
     {
       name: "Chỉ Muốn Bên Em Lúc Này",
@@ -62,22 +61,19 @@ const app = {
       name: "Tình Ca Tình Ta",
       singer: "Huỳnh Văn Nhật",
       path: "./songs/tinhcatinhta.mp3",
-      image:
-        "https://avatar-ex-swe.nixcdn.com/song/2022/05/27/2/3/d/4/1653644872584_500.jpg",
+      image: "https://avatar-ex-swe.nixcdn.com/song/2022/05/27/2/3/d/4/1653644872584_500.jpg",
     },
     {
       name: "Tình Yêu Màu Nắng",
       singer: "Phạm Thanh Hà",
       path: "./songs/tinhyeumaunang.mp3",
-      image:
-        "https://avatar-ex-swe.nixcdn.com/playlist/2014/01/24/c/d/a/3/1390549293033_500.jpg",
+      image: "https://avatar-ex-swe.nixcdn.com/playlist/2014/01/24/c/d/a/3/1390549293033_500.jpg",
     },
     {
       name: "Tâm Sự Tuổi 30",
       singer: "Trịnh Thăng Bình",
       path: "./songs/tamsutuoi30.mp3",
-      image:
-        "https://avatar-ex-swe.nixcdn.com/playlist/2022/04/27/3/d/0/7/1651045700106_500.jpg",
+      image: "https://avatar-ex-swe.nixcdn.com/playlist/2022/04/27/3/d/0/7/1651045700106_500.jpg",
     },
   ],
 
@@ -89,9 +85,7 @@ const app = {
   render: function () {
     const htmls = this.songs.map((song, index) => {
       return `
-            <div class="song ${
-              index === this.currentIndex ? "active" : ""
-            }" data-index="${index}">
+            <div class="song ${index === this.currentIndex ? "active" : ""}" data-index="${index}">
                 <div class="thumb"
                   style="background-image: url('${song.image}')">
                 </div>
@@ -162,15 +156,14 @@ const app = {
     // Khi tiến độ bài hát thay đổi
     audio.ontimeupdate = function () {
       if (audio.duration) {
-        const progressPercent = Math.floor(
-          (audio.currentTime / audio.duration) * 100
-        );
+        const progressPercent = Math.floor((audio.currentTime / audio.duration) * 100);
         progress.value = progressPercent;
+        _this.seekTimeUpdate();
       }
     };
 
     // Xử lý khi tua song
-    progress.onchange = function (e) {
+    progress.oninput = function (e) {
       const seekTime = (audio.duration / 100) * e.target.value;
       audio.currentTime = seekTime;
     };
@@ -236,24 +229,67 @@ const app = {
       }
     };
 
-    // Xử lý khi click vào btn-volume
-    volumeBtn.onclick = function () {
-      _this.isMuted = !_this.isMuted;
-      audio.muted = _this.isMuted;
-      // (chưa biết cách lưu config)
-      volumeMax.classList.toggle("disable", _this.isMuted);
-      volumeMin.classList.toggle("disable", !_this.isMuted);
-    }
+    // Xử lý durationTime của song
 
+    // Xử lý khi click vào btn-volume
+    // volumeBtn.onclick = function () {
+    //   _this.isMuted = !_this.isMuted;
+    //   audio.muted = _this.isMuted;
+    //   // (chưa biết cách lưu config)
+    //   volumeMax.classList.toggle("disable", _this.isMuted);
+    //   volumeMin.classList.toggle("disable", !_this.isMuted);
+    // }
 
     // Xử lý khi change volume (có lỗi chưa fix đc)
-      // volumeProgress.onchange = function (e) {
-      //   if (_this.isMuted) {
-      //     e.target.value  === audio.volume;
-      //   }
-      //   audio.volume = e.target.value / 100;
-      // }
-    
+    volumeProgress.onchange = function (e) {
+      if (_this.isMuted) {
+        e.target.value === audio.volume;
+      }
+      audio.volume = e.target.value / 100;
+    };
+
+    // Xử lý update volume liên tục khi kéo thanh volume
+    volumeProgress.oninput = function () {
+      if (_this.isMuted) {
+        audio.volume = 0;
+      } else {
+        audio.volume = volumeProgress.value / 100;
+      }
+    };
+
+    // Xử lý khi ấn vào volumeMax
+    volumeMax.onclick = function () {
+      audio.volume = 1;
+      volumeProgress.value = 100;
+    };
+
+    // Xử lý khi ấn vào volumeMin
+    volumeMin.onclick = function () {
+      audio.volume = 0;
+      volumeProgress.value = 0;
+    };
+  },
+  // Xử lý durationTime và currentTime update liên tục khi song chạy
+  seekTimeUpdate: function () {
+    let curmins = Math.floor(audio.currentTime / 60);
+    let cursecs = Math.floor(audio.currentTime - curmins * 60);
+    let durmins = Math.floor(audio.duration / 60);
+    let dursecs = Math.floor(audio.duration - durmins * 60);
+    // console.log(durmins, dursecs, curmins, cursecs);
+    if (durmins < 10) {
+      durmins = "0" + durmins;
+    }
+    if (dursecs < 10) {
+      dursecs = "0" + dursecs;
+    }
+    if (curmins < 10) {
+      curmins = "0" + curmins;
+    }
+    if (cursecs < 10) {
+      cursecs = "0" + cursecs;
+    }
+    durationTime.innerText = durmins + " : " + dursecs;
+    currentTime.innerText = curmins + " : " + cursecs;
   },
 
   // Xử lý view khi next song
@@ -324,8 +360,8 @@ const app = {
     this.render();
 
     // Hiển thị trạng thái ban đầu của btn-repeat và btn-random
-    randomBtn.classList.toggle('active', this.isRandom);
-    repeatBtn.classList.toggle('active', this.isRepeat);
+    randomBtn.classList.toggle("active", this.isRandom);
+    repeatBtn.classList.toggle("active", this.isRepeat);
   },
 };
 
